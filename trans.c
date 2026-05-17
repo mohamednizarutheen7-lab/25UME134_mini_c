@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #define MAX_RECORDS 100
 #define DATA_FILE "credit.dat"
 #define TEXT_FILE "accounts.txt"
@@ -26,6 +27,7 @@ void deleteRecord(FILE *fPtr);
 void displayAccounts(FILE *fPtr);
 void searchRecord(FILE *fPtr);
 void printRecord(FILE *out, const struct clientData *client);
+void printHeader(FILE *out);
 
 int main(int argc, char *argv[])
 {
@@ -113,7 +115,7 @@ void textFile(FILE *readPtr)
     else
     {
         rewind(readPtr); // sets pointer to beginning of file
-        fprintf(writePtr, "%-6s%-16s%-11s%10s\n", "Acct", "Last Name", "First Name", "Balance");
+        printHeader(writePtr);
 
         // copy all records from random-access file into text file
         while (!feof(readPtr))
@@ -340,7 +342,8 @@ void displayAccounts(FILE *fPtr)
     int result;
 
     rewind(fPtr); // sets pointer to beginning of file
-    printf("\n%-6s%-16s%-11s%10s\n", "Acct", "Last Name", "First Name", "Balance");
+    printf("\n");
+    printHeader(stdout);
 
     // read records from random-access file
     while (!feof(fPtr))
@@ -362,7 +365,7 @@ void searchRecord(FILE *fPtr)
     struct clientData client = {0, "", "", 0.0};
     char searchName[15];
     int result;
-    int found = 0;
+    bool found = false;
 
     printf("Enter last name to search: ");
     if (scanf("%14s", searchName) != 1)
@@ -373,7 +376,8 @@ void searchRecord(FILE *fPtr)
     }
 
     rewind(fPtr); // sets pointer to beginning of file
-    printf("\n%-6s%-16s%-11s%10s\n", "Acct", "Last Name", "First Name", "Balance");
+    printf("\n");
+    printHeader(stdout);
 
     // read records from random-access file
     while (!feof(fPtr))
@@ -383,7 +387,7 @@ void searchRecord(FILE *fPtr)
         if (result != 0 && client.acctNum != 0 && strcmp(client.lastName, searchName) == 0)
         {
             printRecord(stdout, &client);
-            found = 1;
+            found = true;
         }
     }
 
@@ -399,3 +403,9 @@ void printRecord(FILE *out, const struct clientData *client)
 {
     fprintf(out, "%-6u%-16s%-11s%10.2f\n", client->acctNum, client->lastName, client->firstName, client->balance);
 } // end function printRecord
+
+// unified formatting function for printing the table header
+void printHeader(FILE *out)
+{
+    fprintf(out, "%-6s%-16s%-11s%10s\n", "Acct", "Last Name", "First Name", "Balance");
+} // end function printHeader
