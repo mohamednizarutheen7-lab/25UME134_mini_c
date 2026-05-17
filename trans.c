@@ -28,6 +28,7 @@ void searchRecord(FILE *fPtr);
 
 int main(int argc, char *argv[])
 {
+    (void)argc; // suppress unused parameter warning
     FILE *cfPtr;         // credit.dat file pointer
     unsigned int choice; // user's choice
 
@@ -92,6 +93,7 @@ int main(int argc, char *argv[])
     }     // end while
 
     fclose(cfPtr); // fclose closes the file
+    return EXIT_SUCCESS;
 } // end main
 
 // create formatted text file for printing
