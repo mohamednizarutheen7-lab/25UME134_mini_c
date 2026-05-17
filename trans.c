@@ -25,6 +25,7 @@ void newRecord(FILE *fPtr);
 void deleteRecord(FILE *fPtr);
 void displayAccounts(FILE *fPtr);
 void searchRecord(FILE *fPtr);
+void printRecord(FILE *out, const struct clientData *client);
 
 int main(int argc, char *argv[])
 {
@@ -122,8 +123,7 @@ void textFile(FILE *readPtr)
             // write single record to text file
             if (result != 0 && client.acctNum != 0)
             {
-                fprintf(writePtr, "%-6u%-16s%-11s%10.2f\n", client.acctNum, client.lastName, client.firstName,
-                        client.balance);
+                printRecord(writePtr, &client);
             } // end if
         }     // end while
 
@@ -168,7 +168,8 @@ void updateRecord(FILE *fPtr)
     }
     else
     { // update record
-        printf("%-6u%-16s%-11s%10.2f\n\n", client.acctNum, client.lastName, client.firstName, client.balance);
+        printRecord(stdout, &client);
+        printf("\n");
 
         // request transaction amount from user
         printf("%s", "Enter charge ( + ) or payment ( - ): ");
@@ -180,7 +181,7 @@ void updateRecord(FILE *fPtr)
         }
         client.balance += transaction; // update record balance
 
-        printf("%-6u%-16s%-11s%10.2f\n", client.acctNum, client.lastName, client.firstName, client.balance);
+        printRecord(stdout, &client);
 
         // move file pointer to correct record in file
         // move back by 1 record length
@@ -349,7 +350,7 @@ void displayAccounts(FILE *fPtr)
         // display record
         if (result != 0 && client.acctNum != 0)
         {
-            printf("%-6u%-16s%-11s%10.2f\n", client.acctNum, client.lastName, client.firstName, client.balance);
+            printRecord(stdout, &client);
         }
     }
     printf("\n");
@@ -381,7 +382,7 @@ void searchRecord(FILE *fPtr)
 
         if (result != 0 && client.acctNum != 0 && strcmp(client.lastName, searchName) == 0)
         {
-            printf("%-6u%-16s%-11s%10.2f\n", client.acctNum, client.lastName, client.firstName, client.balance);
+            printRecord(stdout, &client);
             found = 1;
         }
     }
@@ -392,3 +393,9 @@ void searchRecord(FILE *fPtr)
     }
     printf("\n");
 } // end function searchRecord
+
+// unified formatting function for printing a client record
+void printRecord(FILE *out, const struct clientData *client)
+{
+    fprintf(out, "%-6u%-16s%-11s%10.2f\n", client->acctNum, client->lastName, client->firstName, client->balance);
+} // end function printRecord
