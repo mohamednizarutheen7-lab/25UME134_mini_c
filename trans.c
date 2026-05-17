@@ -136,7 +136,7 @@ void updateRecord(FILE *fPtr)
     if (scanf("%u", &account) != 1)
     {
         puts("Invalid input.");
-        while (getchar() != '\n'); // clear buffer
+        { int c; while ((c = getchar()) != '\n' && c != EOF); } // clear buffer safely
         return;
     }
     if (account < 1 || account > MAX_RECORDS)
@@ -167,7 +167,7 @@ void updateRecord(FILE *fPtr)
         if (scanf("%lf", &transaction) != 1)
         {
             puts("Invalid transaction amount.");
-            while (getchar() != '\n'); // clear buffer
+            { int c; while ((c = getchar()) != '\n' && c != EOF); } // clear buffer safely
             return;
         }
         client.balance += transaction; // update record balance
@@ -201,7 +201,7 @@ void deleteRecord(FILE *fPtr)
     if (scanf("%u", &accountNum) != 1)
     {
         puts("Invalid input.");
-        while (getchar() != '\n'); // clear buffer
+        { int c; while ((c = getchar()) != '\n' && c != EOF); } // clear buffer safely
         return;
     }
     if (accountNum < 1 || accountNum > MAX_RECORDS)
@@ -251,7 +251,7 @@ void newRecord(FILE *fPtr)
     if (scanf("%u", &accountNum) != 1)
     {
         puts("Invalid input.");
-        while (getchar() != '\n'); // clear buffer
+        { int c; while ((c = getchar()) != '\n' && c != EOF); } // clear buffer safely
         return;
     }
     if (accountNum < 1 || accountNum > MAX_RECORDS)
@@ -280,7 +280,7 @@ void newRecord(FILE *fPtr)
         if (scanf("%14s%9s%lf", client.lastName, client.firstName, &client.balance) != 3)
         {
             puts("Invalid input format.");
-            while (getchar() != '\n'); // clear buffer
+            { int c; while ((c = getchar()) != '\n' && c != EOF); } // clear buffer safely
             return;
         }
 
@@ -317,7 +317,7 @@ unsigned int enterChoice(void)
     result = scanf("%u", &menuChoice); // receive choice from user
     if (result != 1)
     {
-        while (getchar() != '\n'); // clear the invalid input from buffer
+        { int c; while ((c = getchar()) != '\n' && c != EOF); } // clear the invalid input from buffer safely
         return 0;                  // return an invalid choice to force another iteration
     }
     return menuChoice;
