@@ -3,6 +3,7 @@
 // be placed in the file, and deletes data previously in the file.
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #define MAX_RECORDS 100
 #define DATA_FILE "credit.dat"
 #define TEXT_FILE "accounts.txt"
@@ -23,6 +24,7 @@ void updateRecord(FILE *fPtr);
 void newRecord(FILE *fPtr);
 void deleteRecord(FILE *fPtr);
 void displayAccounts(FILE *fPtr);
+void searchRecord(FILE *fPtr);
 
 int main(int argc, char *argv[])
 {
@@ -54,7 +56,7 @@ int main(int argc, char *argv[])
     }
 
     // enable user to specify action
-    while ((choice = enterChoice()) != 6)
+    while ((choice = enterChoice()) != 7)
     {
         switch (choice)
         {
@@ -77,6 +79,10 @@ int main(int argc, char *argv[])
         // display all accounts
         case 5:
             displayAccounts(cfPtr);
+            break;
+        // search account by last name
+        case 6:
+            searchRecord(cfPtr);
             break;
         // display if user does not select valid choice
         default:
@@ -312,7 +318,8 @@ unsigned int enterChoice(void)
            "3 - add a new account\n"
            "4 - delete an account\n"
            "5 - display all accounts in console\n"
-           "6 - end program\n? ", TEXT_FILE);
+           "6 - search account by last name\n"
+           "7 - end program\n? ", TEXT_FILE);
 
     result = scanf("%u", &menuChoice); // receive choice from user
     if (result != 1)
@@ -345,3 +352,41 @@ void displayAccounts(FILE *fPtr)
     }
     printf("\n");
 } // end function displayAccounts
+
+// search for an account by last name
+void searchRecord(FILE *fPtr)
+{
+    struct clientData client = {0, "", "", 0.0};
+    char searchName[15];
+    int result;
+    int found = 0;
+
+    printf("Enter last name to search: ");
+    if (scanf("%14s", searchName) != 1)
+    {
+        puts("Invalid input.");
+        { int c; while ((c = getchar()) != '\n' && c != EOF); } // clear buffer safely
+        return;
+    }
+
+    rewind(fPtr); // sets pointer to beginning of file
+    printf("\n%-6s%-16s%-11s%10s\n", "Acct", "Last Name", "First Name", "Balance");
+
+    // read records from random-access file
+    while (!feof(fPtr))
+    {
+        result = fread(&client, sizeof(struct clientData), 1, fPtr);
+
+        if (result != 0 && client.acctNum != 0 && strcmp(client.lastName, searchName) == 0)
+        {
+            printf("%-6u%-16s%-11s%10.2f\n", client.acctNum, client.lastName, client.firstName, client.balance);
+            found = 1;
+        }
+    }
+
+    if (!found)
+    {
+        printf("No accounts found with last name '%s'.\n", searchName);
+    }
+    printf("\n");
+} // end function searchRecord
